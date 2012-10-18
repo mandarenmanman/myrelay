@@ -21,8 +21,8 @@
 
 static int log_inited = 0;
 
-static int log_doit(log_t *log, int level, const char *file, int line, \
-                            const char *func, const char *fmt, va_list ap);
+static int log_doit(log_t *log, int level, int flag, const char *file, \
+                    int line, const char *func, const char *fmt, va_list ap);
 
 /*
  * fun: open log file and init log_t
@@ -103,13 +103,13 @@ int log_deinit(log_t *log)
  *
  */
 
-int log_ret(log_t *log, int level, const char *file, int line, const char *func, const char *fmt,...)
+int log_ret(log_t *log, int level, int flag, const char *file, int line, const char *func, const char *fmt,...)
 {
     int ret;
     va_list ap;
 
     va_start(ap, fmt);
-    ret = log_doit(log, level, file, line, func, fmt, ap);
+    ret = log_doit(log, level, flag, file, line, func, fmt, ap);
     va_end(ap);
     return ret;
 }
@@ -121,18 +121,19 @@ int log_ret(log_t *log, int level, const char *file, int line, const char *func,
  *
  */
 
-static int log_doit(log_t *log, int level, const char *file, int line, \
+static int log_doit(log_t *log, int level, int flag, const char *file, int line, \
                             const char *func, const char *fmt, va_list ap)
 {
-    int n = 0, len = 0, ret, fd;
-    char buf[BUFFSIZE];
-    char timebuf[64];
+    int n = 0, len = 0, errno_res, ret, fd;
+    char buf[BUFFSIZE], timebuf[64], strerr[1024] = "";
     time_t t;
     struct tm tm;
     static time_t last = 0;
 
     struct stat statbuf;
     ino_t  i1, i2;
+
+    errno_res = errno;
 
     if(log_inited){
         if(log->level < level){
@@ -164,7 +165,19 @@ static int log_doit(log_t *log, int level, const char *file, int line, \
     }
     len += n;
 
+    if(flag == LOG_WITH_STRERROR){
+        if(buf[len - 1] == '\n'){
+            buf[len--] = '\0';
+        }
+        strerror_r(errno_res, strerr, sizeof(strerr) - 1);
+        n = snprintf(buf + len, BUFFSIZE - len - 1, ", %s\n", strerr);
+        if(n > BUFFSIZE - len - 1){
+            n = BUFFSIZE - len - 1;
+        }
+        len += n;
+    }
     buf[len] = '\0';
+
     if(log_inited){
         n = write(log->fd, buf, len);
     } else {
