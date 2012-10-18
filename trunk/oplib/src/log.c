@@ -36,24 +36,28 @@ log_t *log_init(const char *fname, int level)
     int fd, ret;
     struct stat statbuf;
     log_t *log;
+    char strerr[1024];
 
     log = malloc(sizeof(log_t));
     if(log == NULL){
-        fprintf(stderr, "malloc log_t error, %s", strerror(errno));
+        fprintf(stderr, "malloc log_t error, %s", \
+                        strerror_r(errno, strerr, sizeof(strerr) - 1));
         return NULL;
     }
 
     bzero(log, sizeof(log));
     fd = open(fname, O_WRONLY|O_APPEND|O_CREAT, S_IRWXU|S_IRGRP|S_IROTH);
     if(fd < 0){
-        fprintf(stderr, "open %s error, %s", fname, strerror(errno));
+        fprintf(stderr, "open %s error, %s", fname, \
+                        strerror_r(errno, strerr, sizeof(strerr) - 1));
         free(log);
         return NULL;
     }
 
     ret = fstat(fd, &statbuf);
     if(ret < 0){
-        fprintf(stderr, "stat %s error, %s", fname, strerror(errno));
+        fprintf(stderr, "stat %s error, %s", fname, \
+                        strerror_r(errno, strerr, sizeof(strerr) - 1));
         close(fd);
         free(log);
         return NULL;
@@ -192,18 +196,21 @@ static int log_doit(log_t *log, int level, int flag, const char *file, int line,
         ret = stat(log->fname, &statbuf);
         if(ret < 0){
             if(errno != ENOENT){
-                fprintf(stderr, "stat %s error, %s", log->fname, strerror(errno));
+                fprintf(stderr, "stat %s error, %s", log->fname, \
+                            strerror_r(errno, strerr, sizeof(strerr) - 1));
                 return -1;
             } else {
                 fd = open(log->fname, O_WRONLY|O_APPEND|O_CREAT, S_IRWXU|S_IRGRP|S_IROTH);
 
                 if(fd < 0){
-                    fprintf(stderr, "open %s error, %s", log->fname, strerror(errno));
+                    fprintf(stderr, "open %s error, %s", log->fname, \
+                                strerror_r(errno, strerr, sizeof(strerr) - 1));
                     return -1;
                 } else {
                     ret = fstat(fd, &statbuf);
                     if(ret < 0){
-                        fprintf(stderr, "stat %s error, %s", log->fname, strerror(errno));
+                        fprintf(stderr, "stat %s error, %s", log->fname, \
+                                    strerror_r(errno, strerr, sizeof(strerr) - 1));
                         close(fd);
                         return -1;
                     } else {
@@ -222,7 +229,8 @@ static int log_doit(log_t *log, int level, int flag, const char *file, int line,
                 fd = open(log->fname, O_WRONLY|O_APPEND|O_CREAT, S_IRWXU|S_IRGRP|S_IROTH);
 
                 if(fd < 0){
-                    fprintf(stderr, "open %s error, %s", log->fname, strerror(errno));
+                    fprintf(stderr, "open %s error, %s", log->fname, \
+                            strerror_r(errno, strerr, sizeof(strerr) - 1));
                     return -1;
                 } else {
                     fprintf(stdout, "reopen %s success\n", log->fname);
