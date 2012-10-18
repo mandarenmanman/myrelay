@@ -59,7 +59,7 @@ int conf_init(const char *conf)
     }
 
     if( (fp = fopen(conf, "r")) == NULL){
-        log(g_log, "fopen[%s] error, %s\n", conf, strerror(errno));
+        log_strerr(g_log, "fopen[%s] error\n", conf);
         return -1;
     }
 

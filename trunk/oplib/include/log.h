@@ -16,7 +16,12 @@ typedef struct _log_t{
 
 log_t *log_init(const char *fname, int level);
 int log_deinit(log_t *log);
-int log_ret(log_t *log, int level, const char *, int, const char *, const char *, ...);
+int log_ret(log_t *log, int level, int flag, const char *, int, const char *, const char *, ...);
+
+enum{
+    LOG_WITHOUT_STRERROR = 0,
+    LOG_WITH_STRERROR
+};
 
 enum{
     LOG_NONE = 0,
@@ -26,15 +31,16 @@ enum{
     LOG_LEVEL_INFO
 };
 
-#define log(log, ...) log_ret(log, LOG_LEVEL_LOG, __FILE__, __LINE__, __func__, __VA_ARGS__)
-#define log_err(log, ...) log_ret(log, LOG_LEVEL_ERR, __FILE__, __LINE__, __func__, __VA_ARGS__)
+#define log(log, ...) log_ret(log, LOG_LEVEL_LOG, LOG_WITHOUT_STRERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
+#define log_err(log, ...) log_ret(log, LOG_LEVEL_ERR, LOG_WITHOUT_STRERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
+#define log_strerr(log, ...) log_ret(log, LOG_LEVEL_ERR, LOG_WITH_STRERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 #ifdef DEBUG
-#define debug(log, ...) log_ret(log, LOG_LEVEL_DEBUG, __FILE__, __LINE__, __func__, __VA_ARGS__)
+#define debug(log, ...) log_ret(log, LOG_LEVEL_DEBUG, LOG_WITHOUT_STRERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
 #else
 #define debug(...)
 #endif
 
-#define info(log, ...) log_ret(log, LOG_LEVEL_INFO, __FILE__, __LINE__, __func__, __VA_ARGS__)
+#define info(log, ...) log_ret(log, LOG_LEVEL_INFO, LOG_WITHOUT_STRERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 #endif

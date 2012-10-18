@@ -53,7 +53,7 @@ inline int make_listen_nonblock(const char *host, const char *serv)
     do{
         fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
         if(fd < 0){
-            log(g_log, "socket error, %s\n", strerror(errno));
+            log_strerr(g_log, "socket error\n");
             continue;
         }
         debug(g_log, "socket success\n");
@@ -66,7 +66,7 @@ inline int make_listen_nonblock(const char *host, const char *serv)
             debug(g_log, "bind success\n");
             break;
         }
-        log(g_log, "bind fail, %s\n", strerror(errno));
+        log_strerr(g_log, "bind fail\n");
         close(fd);
     }while( (res = res->ai_next) != NULL );
 
@@ -75,7 +75,7 @@ inline int make_listen_nonblock(const char *host, const char *serv)
     }
 
     if(listen(fd, 1024) < 0) {
-        log(g_log, "listen error, %s\n", strerror(errno));
+        log_strerr(g_log, "listen error\n");
         return -1;
     }
     debug(g_log, "listen success\n");
@@ -116,7 +116,7 @@ inline int connect_nonblock(const char *host, const char *serv, int *flag)
 
     do{
         if( (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) < 0 ){
-            log(g_log, "socket error, %s\n", strerror(errno));
+            log_strerr(g_log, "socket error\n");
             return -1;
         }
 
@@ -132,7 +132,7 @@ inline int connect_nonblock(const char *host, const char *serv, int *flag)
 
         if( (ret = connect(sockfd, res->ai_addr, res->ai_addrlen)) < 0 ){
             if(errno != EINPROGRESS){
-                log(g_log, "connect error, %s\n", strerror(errno));
+                log_strerr(g_log, "connect error\n");
                 close(sockfd);
                 return -1;
             } else {
@@ -180,7 +180,7 @@ inline int accept_client(int sockfd, struct sockaddr_in *cliaddr, socklen_t *len
     fd = accept(sockfd, (struct sockaddr *)cliaddr, len);
     if(fd < 0){
         if( (errno != EAGAIN) || (errno != EWOULDBLOCK) ){
-            log(g_log, "accept error, %s\n", strerror(errno));
+            log_strerr(g_log, "accept error\n");
         }
         return -1;
     }

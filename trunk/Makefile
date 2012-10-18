@@ -3,7 +3,7 @@ CFLAGS = -O2 -I /home/xiaoshi.xjl/myrelay/trunk/oplib/include/
 OBJECT = cli_pool.o conn_pool.o main.o my_buf.o my_ops.o my_pool.o work.o my_protocol.o sqldump.o passwd.o sha1.o my_conf.o
 
 all : $(OBJECT)
-	gcc -o myrelay $(OBJECT) -L /home/xiaoshi.xjl/myrelay/oplib/lib/ -lop
+	gcc -o myrelay $(OBJECT) -L /home/xiaoshi.xjl/myrelay/trunk/oplib/lib/ -lop
 
 main.o	:	main.c cli_pool.h my_pool.h conn_pool.h my_conf.h
 	gcc -c main.c $(CFLAGS)

@@ -94,7 +94,7 @@ static int iprange_parse(iprange_t *handler, const char *filename)
     ipblock *ptr;
 
     if( (fp = fopen(filename, "r")) == NULL ){
-        log(g_log, "fopen[%s] error[%s]\n", filename, strerror(errno));
+        log_strerr(g_log, "fopen[%s] error[%s]\n", filename);
         return -1;
     }
 
@@ -130,7 +130,7 @@ static int iprange_parse(iprange_t *handler, const char *filename)
     }
 
     if(ferror(fp)){
-        log(g_log, "fscanf[%s] error[%s]\n", filename, strerror(errno));
+        log_strerr(g_log, "fscanf[%s] error[%s]\n", filename);
         fclose(fp);
         return -1;
     }
