@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _ipblock{
     uint32_t ipaddr_s;
     uint32_t ipaddr_e;
@@ -18,5 +22,9 @@ int ipaddr_in_range(iprange_t *handler, uint32_t addr);
 int iprange_dump(iprange_t *handler);
 int iprange_release(iprange_t *handler);
 iprange_t *iprange_reload(iprange_t *handler, const char *filename, int max);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
