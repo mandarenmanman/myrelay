@@ -15,6 +15,7 @@
 #include <sys/types.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include <errno.h>
 #include "log.h"
 
 #define BUFFSIZE 8192

@@ -4,7 +4,9 @@
 #include <pthread.h>
 #include <sys/stat.h>
 
-#define DEBUG
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct _log_t{
     char *fname;
@@ -34,13 +36,11 @@ enum{
 #define log(log, ...) log_ret(log, LOG_LEVEL_LOG, LOG_WITHOUT_STRERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
 #define log_err(log, ...) log_ret(log, LOG_LEVEL_ERR, LOG_WITHOUT_STRERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
 #define log_strerr(log, ...) log_ret(log, LOG_LEVEL_ERR, LOG_WITH_STRERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
-
-#ifdef DEBUG
 #define debug(log, ...) log_ret(log, LOG_LEVEL_DEBUG, LOG_WITHOUT_STRERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
-#else
-#define debug(...)
-#endif
-
 #define info(log, ...) log_ret(log, LOG_LEVEL_INFO, LOG_WITHOUT_STRERROR, __FILE__, __LINE__, __func__, __VA_ARGS__)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
